@@ -1,0 +1,9 @@
+{
+  "name": "Bazarly — Optical Metrology, Voice ERP & Tokenized Settlement",
+  "short_name": "Bazarly",
+  "description": "Sub-millimeter garment telemetry, bilingual Bangla/English voice ERP, and bKash Mode 0011 + Stripe USD settlement.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000"
+}

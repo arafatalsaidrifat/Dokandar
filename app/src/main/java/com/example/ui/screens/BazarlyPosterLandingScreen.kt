@@ -340,7 +340,9 @@ fun BazarlyPosterLandingScreen(
                         )
                         NavigationTab.WEB_PORTAL -> WebCompanionScreen(
                             language = language,
-                            portalUrl = viewModel.webServer.getPortalUrl()
+                            portalUrl = viewModel.webServer.getPortalUrl(),
+                            apkSizeMb = viewModel.webServer.getApkSizeFormatted(),
+                            apkSha256 = viewModel.webServer.getApkSha256Short()
                         )
                         null -> {}
                     }
@@ -428,22 +430,25 @@ fun BazarlyPosterLandingScreen(
 
                         Spacer(modifier = Modifier.height(18.dp))
 
-                        // Two Pill Buttons
+                        // Pill Buttons Row (including GET APP / WEB)
                         Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Button(
-                                onClick = { viewModel.openOperationalDrawer(NavigationTab.INSPECTION) },
+                                onClick = { viewModel.openOperationalDrawer(NavigationTab.WEB_PORTAL) },
                                 shape = RoundedCornerShape(999.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = InkPrimary,
                                     contentColor = AchromaticGround
                                 ),
-                                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                                contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
                                 modifier = Modifier
                                     .height(48.dp)
-                                    .testTag("hero_launch_vision_button")
+                                    .testTag("hero_get_app_web_button")
                             ) {
                                 Box(
                                     modifier = Modifier
@@ -452,11 +457,29 @@ fun BazarlyPosterLandingScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
+                                    text = "GET APP / WEB ↓",
+                                    fontFamily = IbmPlexMonoFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 10.sp,
+                                    letterSpacing = 0.10.em
+                                )
+                            }
+
+                            OutlinedButton(
+                                onClick = { viewModel.openOperationalDrawer(NavigationTab.INSPECTION) },
+                                shape = RoundedCornerShape(999.dp),
+                                contentPadding = PaddingValues(horizontal = 18.dp, vertical = 12.dp),
+                                modifier = Modifier
+                                    .height(48.dp)
+                                    .testTag("hero_launch_vision_button")
+                            ) {
+                                Text(
                                     text = "LAUNCH VISION",
                                     fontFamily = IbmPlexMonoFamily,
                                     fontWeight = FontWeight.Medium,
-                                    fontSize = 10.5.sp,
-                                    letterSpacing = 0.12.em
+                                    fontSize = 10.sp,
+                                    letterSpacing = 0.10.em,
+                                    color = InkPrimary
                                 )
                             }
 
@@ -472,7 +495,7 @@ fun BazarlyPosterLandingScreen(
                                     text = "VOICE ERP (BN/EN)",
                                     fontFamily = IbmPlexMonoFamily,
                                     fontWeight = FontWeight.Medium,
-                                    fontSize = 10.5.sp,
+                                    fontSize = 10.sp,
                                     letterSpacing = 0.10.em,
                                     color = InkPrimary
                                 )

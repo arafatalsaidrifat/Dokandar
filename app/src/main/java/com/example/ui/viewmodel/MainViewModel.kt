@@ -48,7 +48,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val localRepository = AuralisRepository(application)
     private val firestoreRepository = FirestoreAuralisRepository(application)
     private val paymentEngine = DualMarketPaymentEngine()
-    val webServer = WebCompanionServer(application, 8080)
+    val webServer = WebCompanionServer(application, 8080, localRepository, firestoreRepository)
 
     private val _currentUserId = MutableStateFlow<String?>(null)
     val currentUserId: StateFlow<String?> = _currentUserId.asStateFlow()
@@ -95,11 +95,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _roleMode = MutableStateFlow(RoleMode.FACTORY_RMG)
     val roleMode: StateFlow<RoleMode> = _roleMode.asStateFlow()
 
-    private val _currentTab = MutableStateFlow(NavigationTab.INSPECTION)
+    private val _currentTab = MutableStateFlow(NavigationTab.WEB_PORTAL)
     val currentTab: StateFlow<NavigationTab> = _currentTab.asStateFlow()
 
-    // Active Operational Console Drawer (null = viewing full 7-section poster landing)
-    private val _activeDrawer = MutableStateFlow<NavigationTab?>(null)
+    // Active Operational Console Drawer (defaults to WEB_PORTAL so the Web View is visible immediately)
+    private val _activeDrawer = MutableStateFlow<NavigationTab?>(NavigationTab.WEB_PORTAL)
     val activeDrawer: StateFlow<NavigationTab?> = _activeDrawer.asStateFlow()
 
     // Runtime Field-Swap Presets (Section 6)

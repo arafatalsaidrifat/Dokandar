@@ -61,7 +61,7 @@ fun BazarlyMainApp(viewModel: MainViewModel = viewModel()) {
     val currentUser by remember { Firebase.auth.authStateFlow() }
         .collectAsStateWithLifecycle(initialValue = Firebase.auth.currentUser)
 
-    var fallbackSessionUid by remember { mutableStateOf<String?>(null) }
+    var fallbackSessionUid by remember { mutableStateOf<String?>("dev-operator") }
     val activeUid = currentUser?.uid ?: fallbackSessionUid
 
     // Bind Firestore real-time listeners (or local dev-operator session) to activeUid
@@ -106,6 +106,11 @@ fun BazarlyMainApp(viewModel: MainViewModel = viewModel()) {
                     onExploreStage = {
                         fallbackSessionUid = "dev-operator"
                         viewModel.bindAuthenticatedUser("dev-operator")
+                    },
+                    onOpenWebApp = {
+                        fallbackSessionUid = "dev-operator"
+                        viewModel.bindAuthenticatedUser("dev-operator")
+                        viewModel.openOperationalDrawer(com.example.ui.viewmodel.NavigationTab.WEB_PORTAL)
                     }
                 )
             } else {

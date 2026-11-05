@@ -65,7 +65,8 @@ import com.google.firebase.auth.auth
 @Composable
 fun AuthScreen(
     onSignInSuccess: (String) -> Unit,
-    onExploreStage: () -> Unit = { onSignInSuccess("dev-operator") }
+    onExploreStage: () -> Unit = { onSignInSuccess("dev-operator") },
+    onOpenWebApp: () -> Unit = onExploreStage
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -120,24 +121,57 @@ fun AuthScreen(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Box(
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .background(SignalAccent, CircleShape)
+                        )
+                        Text(
+                            text = "ZERO-TRUST GATE",
+                            fontFamily = IbmPlexMonoFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 9.sp,
+                            letterSpacing = 0.06.em,
+                            color = InkMuted,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    }
+
+                    Button(
+                        onClick = onOpenWebApp,
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = InkPrimary,
+                            contentColor = AchromaticGround
+                        ),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                         modifier = Modifier
-                            .size(6.dp)
-                            .background(SignalAccent, CircleShape)
-                    )
-                    Text(
-                        text = "SYS.AUTH // ZERO-TRUST GATE",
-                        fontFamily = IbmPlexMonoFamily,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 9.5.sp,
-                        letterSpacing = 0.08.em,
-                        color = InkMuted,
-                        maxLines = 1,
-                        softWrap = false,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                            .height(32.dp)
+                            .testTag("auth_get_app_web_button")
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(5.dp)
+                                .background(SignalAccent, CircleShape)
+                        )
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Text(
+                            text = "GET APP ↓",
+                            fontFamily = IbmPlexMonoFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 9.sp,
+                            letterSpacing = 0.06.em,
+                            maxLines = 1,
+                            softWrap = false
+                        )
+                    }
                 }
             }
             HorizontalDivider(thickness = 1.dp, color = HairlineRule)

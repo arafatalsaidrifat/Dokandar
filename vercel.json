@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "outputDirectory": "public",
+  "headers": [
+    {
+      "source": "/download/(.*)\\.apk",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/vnd.android.package-archive"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Bazarly-v4.2-universal.apk\""
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!download|api|manifest\\.json).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
