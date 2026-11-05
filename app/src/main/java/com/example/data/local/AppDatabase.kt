@@ -6,12 +6,28 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import androidx.room.Update
 import com.example.data.model.InspectionRecord
 import com.example.data.model.PaymentAgreement
 import com.example.data.model.ProductionNode
 import com.example.data.model.VoiceAction
+import com.google.firebase.Timestamp
 import kotlinx.coroutines.flow.Flow
+import java.util.Date
+
+class TimestampConverters {
+    @TypeConverter
+    fun fromTimestamp(value: Timestamp?): Long? {
+        return value?.toDate()?.time
+    }
+
+    @TypeConverter
+    fun toTimestamp(value: Long?): Timestamp? {
+        return value?.let { Timestamp(Date(it)) }
+    }
+}
 
 @Dao
 interface ProductionNodeDao {
@@ -65,9 +81,10 @@ interface PaymentAgreementDao {
         VoiceAction::class,
         PaymentAgreement::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
+@TypeConverters(TimestampConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productionNodeDao(): ProductionNodeDao
     abstract fun inspectionDao(): InspectionDao

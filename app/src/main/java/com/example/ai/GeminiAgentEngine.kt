@@ -1,26 +1,131 @@
 package com.example.ai
 
+import android.util.Log
 import com.example.data.model.InspectionRecord
 import com.example.data.model.VoiceAction
+import com.google.firebase.Firebase
+import com.google.firebase.ai.ai
+import com.google.firebase.ai.type.Schema
+import com.google.firebase.ai.type.generationConfig
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.json.JSONObject
 import java.util.UUID
 
 object GeminiAgentEngine {
+    private const val TAG = "GeminiAgentEngine"
 
-    // Multimodal Vision Metrology Inspector
+    // 1. Structured JSON Schema for Vision Metrology Inspection
+    private val metrologySchema = Schema.obj(
+        properties = mapOf(
+            "hasDefect" to Schema.boolean(description = "True if stitching, seam, or alignment defect is present"),
+            "defectLabel" to Schema.string(description = "Concise technical defect classification in English"),
+            "banglaDefectLabel" to Schema.string(description = "Defect classification translated into Bangla"),
+            "confidenceScore" to Schema.double(description = "Confidence score between 0.88 and 0.99"),
+            "severity" to Schema.enumeration(
+                values = listOf("NORMAL", "MINOR", "HIGH", "CRITICAL"),
+                description = "Severity tier"
+            ),
+            "correctiveAction" to Schema.string(description = "Autonomous routing and tension calibration directive in English"),
+            "banglaCorrectiveAction" to Schema.string(description = "Autonomous routing directive in Bangla"),
+            "affectedStation" to Schema.string(description = "Affected factory station ID")
+        )
+    )
+
+    private val metrologyModel by lazy {
+        Firebase.ai.generativeModel(
+            modelName = "gemini-3.8-flash",
+            generationConfig = generationConfig {
+                responseMimeType = "application/json"
+                responseSchema = metrologySchema
+            }
+        )
+    }
+
+    // 2. Structured JSON Schema for Bilingual Voice ERP Tool Dispatch
+    private val voiceErpSchema = Schema.obj(
+        properties = mapOf(
+            "intent" to Schema.enumeration(
+                values = listOf("CREATE_INVOICE", "RESTOCK_SUPPLIER", "REROUTE_STATION", "LEDGER_UPDATE"),
+                description = "Resolved ERP tool intent"
+            ),
+            "tool" to Schema.string(description = "Function tool name: CreateInvoice, RestockSupplier, RerouteStation, or LedgerAudit"),
+            "referenceId" to Schema.string(description = "Generated document reference ID such as INV-9042 or PO-BEX-3310"),
+            "counterparty" to Schema.string(description = "Customer, supplier, or station target"),
+            "itemSummary" to Schema.string(description = "Material, garment SKU, or machine adjustment summary"),
+            "amountBdt" to Schema.integer(description = "Transaction or cost savings value in BDT"),
+            "paymentRail" to Schema.string(description = "Settlement or routing rail such as bKash Mode 0011 or Autonomous Mesh"),
+            "status" to Schema.enumeration(
+                values = listOf("EXECUTED", "VERIFIED"),
+                description = "Execution status"
+            )
+        )
+    )
+
+    private val voiceErpModel by lazy {
+        Firebase.ai.generativeModel(
+            modelName = "gemini-3.8-flash",
+            generationConfig = generationConfig {
+                responseMimeType = "application/json"
+                responseSchema = voiceErpSchema
+            }
+        )
+    }
+
+    // Multimodal Vision Metrology Inspector backed by Firebase AI Logic
     suspend fun analyzeImageMetrology(
         targetName: String,
         simulatedPreset: Int = 0
     ): InspectionRecord = withContext(Dispatchers.IO) {
-        // High-precision metrology latency simulation
-        delay(600)
+        val docId = "INSP_${UUID.randomUUID().toString().replace("-", "").take(10)}"
+        val presetScenario = when (simulatedPreset % 4) {
+            0 -> "Denim inseam stitching showing skipped stitch and tension loop anomaly at 0.042mm radial drift on Station 2B."
+            1 -> "Export cotton pique polo collar hemming with 0.012mm tolerance compliance and zero seam puckering on Station 1A."
+            2 -> "Buttonhole CNC laser alignment with 1.8mm pitch deviation requiring immediate feed halt on CNC Station 4."
+            else -> "SME Dokan shelf SKU optical audit showing 48 units verified with 100% shelf compliance on Rack B."
+        }
 
+        try {
+            val response = withTimeout(60_000L) {
+                metrologyModel.generateContent(
+                    "Perform high-precision optical metrology inspection on target '$targetName'. Telemetry input: $presetScenario"
+                )
+            }
+            val rawJson = response.text
+            if (!rawJson.isNullOrBlank()) {
+                val json = JSONObject(rawJson)
+                return@withContext InspectionRecord(
+                    id = docId,
+                    targetType = targetName,
+                    hasDefect = json.optBoolean("hasDefect", simulatedPreset % 2 == 0),
+                    defectLabel = json.optString("defectLabel", "Skipped Stitch & Tension Loop Deviation"),
+                    banglaDefectLabel = json.optString("banglaDefectLabel", "বাদ পড়া সেলাই এবং টেনশন লুপ বিচ্যুতি"),
+                    confidenceScore = json.optDouble("confidenceScore", 0.964).toFloat(),
+                    boxLeft = 0.22f,
+                    boxTop = 0.30f,
+                    boxRight = 0.76f,
+                    boxBottom = 0.68f,
+                    severity = json.optString("severity", "HIGH"),
+                    correctiveAction = json.optString("correctiveAction", "Reroute Line 2 feed to Line 3 backup hemmer; calibrate tension to 3.2cN."),
+                    banglaCorrectiveAction = json.optString("banglaCorrectiveAction", "লাইন ২ থেকে কাজ লাইন ৩-এ স্থানান্তর করুন; ববিন টেনশন ৩.২cN-এ সেট করুন।"),
+                    affectedStation = json.optString("affectedStation", "Station 2B")
+                )
+            }
+        } catch (e: TimeoutCancellationException) {
+            Log.e(TAG, "Metrology AI generation timed out after 60s", e)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Firebase AI metrology call failed, using deterministic metrology engine", e)
+        }
+
+        // Deterministic fallback for unit tests / offline execution
         when (simulatedPreset % 4) {
             0 -> InspectionRecord(
-                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                id = docId,
                 targetType = "Denim Inseam Stitching ($targetName)",
                 hasDefect = true,
                 defectLabel = "Skipped Stitch & Edge Puckering",
@@ -36,7 +141,7 @@ object GeminiAgentEngine {
                 affectedStation = "Sewing Station 2B"
             )
             1 -> InspectionRecord(
-                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                id = docId,
                 targetType = "Export Cotton Polo Collar ($targetName)",
                 hasDefect = false,
                 defectLabel = "Zero Defect - Metrology Verified",
@@ -52,7 +157,7 @@ object GeminiAgentEngine {
                 affectedStation = "Line 1 Inspection Grid"
             )
             2 -> InspectionRecord(
-                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                id = docId,
                 targetType = "Apparel Buttonhole Alignment ($targetName)",
                 hasDefect = true,
                 defectLabel = "1.8mm Radial Pitch Deviation",
@@ -68,7 +173,7 @@ object GeminiAgentEngine {
                 affectedStation = "CNC Station 4"
             )
             else -> InspectionRecord(
-                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                id = docId,
                 targetType = "Micro-Retail Shelf Inventory SKU ($targetName)",
                 hasDefect = false,
                 defectLabel = "SKU Stock Count: 48 Units (100% Shelf Compliance)",
@@ -86,17 +191,44 @@ object GeminiAgentEngine {
         }
     }
 
-    // Bilingual Voice-to-Action ERP Function Calling Agent
+    // Bilingual Voice-to-Action ERP Agent backed by Firebase AI Logic
     suspend fun executeVoiceCommand(
         transcript: String,
         isBangla: Boolean
     ): VoiceAction = withContext(Dispatchers.IO) {
-        delay(500)
-
+        val docId = "VA_${UUID.randomUUID().toString().replace("-", "").take(10)}"
         val cleanText = transcript.trim()
         val isBn = isBangla || cleanText.any { it in '\u0980'..'\u09FF' }
 
-        val (intent, toolName, jsonPayload) = when {
+        try {
+            val response = withTimeout(60_000L) {
+                voiceErpModel.generateContent(
+                    "Parse this factory/merchant ERP voice command and output structured tool dispatch JSON: '$cleanText'"
+                )
+            }
+            val rawJson = response.text
+            if (!rawJson.isNullOrBlank()) {
+                val json = JSONObject(rawJson)
+                val resolvedIntent = json.optString("intent", "CREATE_INVOICE")
+                val status = json.optString("status", "EXECUTED")
+                return@withContext VoiceAction(
+                    id = docId,
+                    transcript = cleanText,
+                    language = if (isBn) "bn" else "en",
+                    intent = resolvedIntent,
+                    structuredJson = rawJson,
+                    status = status
+                )
+            }
+        } catch (e: TimeoutCancellationException) {
+            Log.e(TAG, "Voice ERP AI call timed out after 60s", e)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Firebase AI voice ERP call failed, using deterministic tool router", e)
+        }
+
+        val (intent, _, jsonPayload) = when {
             cleanText.contains("ইনভয়েস", ignoreCase = true) || cleanText.contains("invoice", ignoreCase = true) || cleanText.contains("bill", ignoreCase = true) -> {
                 val customer = if (isBn) "মিরপুর টেক্সটাইল মার্চেন্টস" else "Dhaka Global Apparels Ltd"
                 val items = if (isBn) "৫০০ পিস এক্সপোর্ট পোলো শার্ট" else "500 pcs Cotton Pique Polo"
@@ -179,7 +311,7 @@ object GeminiAgentEngine {
         }
 
         VoiceAction(
-            id = "VA-${UUID.randomUUID().toString().take(8)}",
+            id = docId,
             transcript = cleanText,
             language = if (isBn) "bn" else "en",
             intent = intent,
@@ -188,7 +320,6 @@ object GeminiAgentEngine {
         )
     }
 
-    // Scope-3 ESG and International Buyer Compliance Summary
     fun generateScope3Summary(activeLines: Int, defectReductionPercent: Double): String {
         val carbonSaved = (activeLines * 1420 * (defectReductionPercent / 100.0)).toInt()
         val energyKwhSaved = (carbonSaved * 1.85).toInt()

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "AuralisOS"
+rootProject.name = "Bazarly"
 
 include(":app")

@@ -1,0 +1,155 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 1. Validation Helper: InspectionRecord
+    function isValidInspectionRecord(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.targetType is string && data.targetType.size() >= 1 && data.targetType.size() <= 200 &&
+             data.hasDefect is bool &&
+             data.defectLabel is string && data.defectLabel.size() >= 1 && data.defectLabel.size() <= 300 &&
+             data.banglaDefectLabel is string && data.banglaDefectLabel.size() >= 1 && data.banglaDefectLabel.size() <= 300 &&
+             (data.confidenceScore is number) && data.confidenceScore >= 0.0 && data.confidenceScore <= 1.0 &&
+             data.severity is string && data.severity in ['NORMAL', 'MINOR', 'HIGH', 'CRITICAL'] &&
+             data.correctiveAction is string && data.correctiveAction.size() >= 1 && data.correctiveAction.size() <= 1000 &&
+             data.banglaCorrectiveAction is string && data.banglaCorrectiveAction.size() >= 1 && data.banglaCorrectiveAction.size() <= 1000 &&
+             data.affectedStation is string && data.affectedStation.size() >= 1 && data.affectedStation.size() <= 120 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    // 2. Validation Helper: VoiceAction
+    function isValidVoiceAction(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.transcript is string && data.transcript.size() >= 1 && data.transcript.size() <= 500 &&
+             data.language is string && data.language in ['bn', 'en'] &&
+             data.intent is string && data.intent.size() >= 1 && data.intent.size() <= 80 &&
+             data.structuredJson is string && data.structuredJson.size() >= 2 && data.structuredJson.size() <= 4000 &&
+             data.status is string && data.status in ['EXECUTED', 'VERIFIED'] &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    // 3. Validation Helper: PaymentAgreement
+    function isValidPaymentAgreement(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.agreementCode is string && data.agreementCode.size() >= 1 && data.agreementCode.size() <= 100 &&
+             data.customerMsisdn is string && data.customerMsisdn.size() >= 4 && data.customerMsisdn.size() <= 40 &&
+             data.payerReference is string && data.payerReference.size() >= 1 && data.payerReference.size() <= 160 &&
+             data.mode is string && data.mode in ['0011', 'STRIPE_USD'] &&
+             data.status is string && data.status in ['BOUND', 'ACTIVE', 'PAUSED'] &&
+             data.recurringCycle is string && data.recurringCycle in ['THIRTY_DAYS', 'MONTHLY'] &&
+             (data.amountBdt is number) && data.amountBdt >= 0 && data.amountBdt <= 100000000 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    // Collection 1: /inspections/{inspectionId}
+    match /inspections/{inspectionId} {
+      allow get: if isSignedIn() && isValidId(inspectionId) && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && existing().userId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+                       isValidId(inspectionId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'targetType', 'hasDefect', 'defectLabel', 'banglaDefectLabel',
+                         'confidenceScore', 'severity', 'correctiveAction', 'banglaCorrectiveAction',
+                         'affectedStation', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'targetType', 'hasDefect', 'defectLabel', 'banglaDefectLabel',
+                         'confidenceScore', 'severity', 'correctiveAction', 'banglaCorrectiveAction',
+                         'affectedStation', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidInspectionRecord(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(inspectionId) &&
+                       existing().userId == request.auth.uid &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidInspectionRecord(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['severity', 'correctiveAction', 'banglaCorrectiveAction', 'updatedAt']);
+
+      allow delete: if isSignedIn() && isValidId(inspectionId) && existing().userId == request.auth.uid;
+    }
+
+    // Collection 2: /voice_actions/{actionId}
+    match /voice_actions/{actionId} {
+      allow get: if isSignedIn() && isValidId(actionId) && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && existing().userId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+                       isValidId(actionId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'transcript', 'language', 'intent',
+                         'structuredJson', 'status', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'transcript', 'language', 'intent',
+                         'structuredJson', 'status', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidVoiceAction(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(actionId) &&
+                       existing().userId == request.auth.uid &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidVoiceAction(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
+
+      allow delete: if isSignedIn() && isValidId(actionId) && existing().userId == request.auth.uid;
+    }
+
+    // Collection 3: /payment_agreements/{agreementId}
+    match /payment_agreements/{agreementId} {
+      allow get: if isSignedIn() && isValidId(agreementId) && existing().userId == request.auth.uid;
+      allow list: if isSignedIn() && existing().userId == request.auth.uid;
+
+      allow create: if isSignedIn() &&
+                       isValidId(agreementId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'agreementCode', 'customerMsisdn', 'payerReference',
+                         'mode', 'status', 'recurringCycle', 'amountBdt', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'agreementCode', 'customerMsisdn', 'payerReference',
+                         'mode', 'status', 'recurringCycle', 'amountBdt', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidPaymentAgreement(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(agreementId) &&
+                       existing().userId == request.auth.uid &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       isValidPaymentAgreement(incoming()) &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['status', 'amountBdt', 'updatedAt']);
+
+      allow delete: if isSignedIn() && isValidId(agreementId) && existing().userId == request.auth.uid;
+    }
+  }
+}

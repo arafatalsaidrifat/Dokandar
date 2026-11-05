@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">AuralisOS</string>
+    <string name="app_name">Bazarly</string>
+    <string name="brand_wordmark">BAZARLY</string>
+    <string name="auth_sign_in_google">SIGN IN WITH GOOGLE</string>
+    <string name="hero_eyebrow">SYS.01 // OPTICAL METROLOGY &amp; VOICE ERP</string>
+    <string name="hero_headline_prefix">Sub-millimeter garment telemetry and autonomous</string>
+    <string name="hero_headline_accent">supply execution.</string>
+    <string name="nav_sign_out">SIGN OUT</string>
 </resources>

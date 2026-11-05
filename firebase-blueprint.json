@@ -1,0 +1,105 @@
+{
+  "entities": {
+    "InspectionRecord": {
+      "title": "InspectionRecord",
+      "description": "Computer vision metrology defect inspection log",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Authenticated user UID" },
+        "targetType": { "type": "string", "description": "Inspected material or component" },
+        "hasDefect": { "type": "boolean", "description": "Whether a defect was detected" },
+        "defectLabel": { "type": "string", "description": "English defect classification" },
+        "banglaDefectLabel": { "type": "string", "description": "Bangla defect classification" },
+        "confidenceScore": { "type": "number", "description": "Confidence score 0.0 to 1.0" },
+        "severity": { "type": "string", "description": "NORMAL, HIGH, or CRITICAL" },
+        "correctiveAction": { "type": "string", "description": "Autonomous routing recommendation" },
+        "banglaCorrectiveAction": { "type": "string", "description": "Bangla corrective action" },
+        "affectedStation": { "type": "string", "description": "Station identifier" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": [
+        "userId",
+        "targetType",
+        "hasDefect",
+        "defectLabel",
+        "banglaDefectLabel",
+        "confidenceScore",
+        "severity",
+        "correctiveAction",
+        "banglaCorrectiveAction",
+        "affectedStation",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "VoiceAction": {
+      "title": "VoiceAction",
+      "description": "Bilingual Bangla/English voice ERP tool execution log",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Authenticated user UID" },
+        "transcript": { "type": "string", "description": "Spoken or typed command" },
+        "language": { "type": "string", "description": "bn or en" },
+        "intent": { "type": "string", "description": "Resolved ERP tool intent" },
+        "structuredJson": { "type": "string", "description": "Structured tool output JSON" },
+        "status": { "type": "string", "description": "Execution status" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": [
+        "userId",
+        "transcript",
+        "language",
+        "intent",
+        "structuredJson",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PaymentAgreement": {
+      "title": "PaymentAgreement",
+      "description": "bKash Tokenized Checkout (Mode 0011) or Stripe subscription agreement",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Authenticated user UID" },
+        "agreementCode": { "type": "string", "description": "Persistent agreement identifier" },
+        "customerMsisdn": { "type": "string", "description": "Customer wallet or account number" },
+        "payerReference": { "type": "string", "description": "Enterprise or merchant name" },
+        "mode": { "type": "string", "description": "0011 or STRIPE_USD" },
+        "status": { "type": "string", "description": "BOUND, ACTIVE, or PAUSED" },
+        "recurringCycle": { "type": "string", "description": "THIRTY_DAYS or MONTHLY" },
+        "amountBdt": { "type": "number", "description": "Recurring billing amount" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": [
+        "userId",
+        "agreementCode",
+        "customerMsisdn",
+        "payerReference",
+        "mode",
+        "status",
+        "recurringCycle",
+        "amountBdt",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/inspections/{inspectionId}": {
+      "schema": { "$ref": "#/entities/InspectionRecord" },
+      "description": "User-scoped computer vision metrology inspection logs"
+    },
+    "/voice_actions/{actionId}": {
+      "schema": { "$ref": "#/entities/VoiceAction" },
+      "description": "User-scoped bilingual voice ERP command logs"
+    },
+    "/payment_agreements/{agreementId}": {
+      "schema": { "$ref": "#/entities/PaymentAgreement" },
+      "description": "User-scoped tokenized payment agreements"
+    }
+  }
+}

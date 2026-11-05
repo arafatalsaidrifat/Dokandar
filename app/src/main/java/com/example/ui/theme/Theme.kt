@@ -1,86 +1,84 @@
 package com.example.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
-private val DarkColorScheme = darkColorScheme(
-    primary = AuralisCyan,
-    onPrimary = Color(0xFF00363F),
-    primaryContainer = Color(0xFF004E5B),
-    onPrimaryContainer = Color(0xFF9EEFFE),
-    secondary = AuralisAmber,
-    onSecondary = Color(0xFF452200),
-    secondaryContainer = Color(0xFF633300),
-    onSecondaryContainer = Color(0xFFFFDCC0),
-    tertiary = AuralisBkashPink,
+private val AchromaticTechnicalLightScheme = lightColorScheme(
+    primary = SignalAccent,
+    onPrimary = Color.White,
+    primaryContainer = DimmerStageGround,
+    onPrimaryContainer = InkPrimary,
+    secondary = InkPrimary,
+    onSecondary = AchromaticGround,
+    secondaryContainer = DimmerStageGround,
+    onSecondaryContainer = InkPrimary,
+    tertiary = SignalAccent,
     onTertiary = Color.White,
-    tertiaryContainer = Color(0xFF5A0027),
-    onTertiaryContainer = Color(0xFFFFD8E4),
-    background = DarkBackground,
-    onBackground = TextPrimary,
-    surface = DarkSurface,
-    onSurface = TextPrimary,
-    surfaceVariant = DarkSurfaceVariant,
-    onSurfaceVariant = TextSecondary,
-    outline = DarkOutline
+    tertiaryContainer = DimmerStageGround,
+    onTertiaryContainer = InkPrimary,
+    background = AchromaticGround,
+    onBackground = InkPrimary,
+    surface = AchromaticGround,
+    onSurface = InkPrimary,
+    surfaceVariant = DimmerStageGround,
+    onSurfaceVariant = InkSecondary,
+    outline = HairlineRule
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = AuralisCyanDark,
-    onPrimary = Color.White,
-    primaryContainer = Color(0xFFE0F7FA),
-    onPrimaryContainer = Color(0xFF00363F),
-    secondary = AuralisAmberDark,
-    onSecondary = Color.White,
-    secondaryContainer = Color(0xFFFFE0B2),
-    onSecondaryContainer = Color(0xFF452200),
-    tertiary = AuralisBkashPink,
-    onTertiary = Color.White,
-    tertiaryContainer = Color(0xFFFFD8E4),
-    onTertiaryContainer = Color(0xFF5A0027),
-    background = LightBackground,
-    onBackground = LightTextPrimary,
-    surface = LightSurface,
-    onSurface = LightTextPrimary,
-    surfaceVariant = LightSurfaceVariant,
-    onSurfaceVariant = LightTextSecondary,
-    outline = LightOutline
+private val AchromaticTechnicalDarkScheme = darkColorScheme(
+    primary = SignalAccentLift,
+    onPrimary = InkPrimary,
+    primaryContainer = Color(0xFF1A1B20),
+    onPrimaryContainer = AchromaticGround,
+    secondary = AchromaticGround,
+    onSecondary = InkPrimary,
+    secondaryContainer = Color(0xFF1A1B20),
+    onSecondaryContainer = AchromaticGround,
+    tertiary = SignalAccentLift,
+    onTertiary = InkPrimary,
+    background = InkPrimary,
+    onBackground = AchromaticGround,
+    surface = InkPrimary,
+    onSurface = AchromaticGround,
+    surfaceVariant = Color(0xFF18191E),
+    onSurfaceVariant = Color(0xFFA8A9B2),
+    outline = InvertedHairlineRule
+)
+
+// Border-radius 0 everywhere except pill buttons (handled explicitly on Button components)
+val AchromaticShapes = Shapes(
+    extraSmall = RoundedCornerShape(0.dp),
+    small = RoundedCornerShape(0.dp),
+    medium = RoundedCornerShape(0.dp),
+    large = RoundedCornerShape(0.dp),
+    extraLarge = RoundedCornerShape(0.dp)
 )
 
 @Composable
 fun AuralisOSTheme(
-    darkTheme: Boolean = true, // Default to high-contrast dark industrial theme
-    dynamicColor: Boolean = false, // Keep branded industrial aesthetic
+    darkTheme: Boolean = false,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = if (darkTheme) AchromaticTechnicalDarkScheme else AchromaticTechnicalLightScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
+        shapes = AchromaticShapes,
         content = content
     )
 }
 
-// Backward compatibility alias
 @Composable
 fun MyApplicationTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {

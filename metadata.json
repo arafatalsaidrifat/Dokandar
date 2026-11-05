@@ -1,6 +1,6 @@
 {
-  "name": "AuralisOS",
-  "description": "Dual-market agentic AI operations, computer-vision metrology, and tokenized commerce platform.",
+  "name": "Bazarly",
+  "description": "Poster-scale achromatic technical-product platform for computer-vision metrology, bilingual voice ERP, and tokenized commerce.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

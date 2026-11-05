@@ -2,28 +2,48 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Precision Metrology Industrial Theme Colors
-val AuralisCyan = Color(0xFF00E5FF)
-val AuralisCyanDark = Color(0xFF00B4D8)
-val AuralisAmber = Color(0xFFFF9100)
-val AuralisAmberDark = Color(0xFFF57C00)
-val AuralisBkashPink = Color(0xFFE2136E)
-val AuralisGreen = Color(0xFF00E676)
-val AuralisRed = Color(0xFFFF5252)
+// Poster-Scale Achromatic Technical-Product Palette
+val AchromaticGround = Color(0xFFEFEFEE)      // #EFEFEE Cool achromatic ground
+val DimmerStageGround = Color(0xFFE4E4E2)     // #E4E4E2 Dimmer stage ground (Hero / Alternate sections)
+val InkPrimary = Color(0xFF0D0D0F)            // #0D0D0F Near-black ink & inverted section ground
+val InkSecondary = Color(0xFF43444A)          // #43444A Secondary body ink
+val InkMuted = Color(0xFF6E6F76)              // #6E6F76 Monospaced technical metadata muted ink
+val SignalAccent = Color(0xFF2F5BFF)          // #2F5BFF Saturated signal accent (small type, dot, rule, trace)
+val SignalAccentLift = Color(0xFF7C97FF)      // #7C97FF Signal lift on dark (#0D0D0F) grounds
+val HairlineRule = Color(0x1F0D0D0F)          // rgba(13,13,15,.12) 1px hairline border
+val InvertedHairlineRule = Color(0x26FFFFFF)  // rgba(255,255,255,.15) 1px hairline on #0D0D0F ground
 
-val DarkBackground = Color(0xFF0B0F19)
-val DarkSurface = Color(0xFF131B2E)
-val DarkSurfaceVariant = Color(0xFF1E293B)
-val DarkOutline = Color(0xFF334155)
+// Runtime Field-Swap Presets
+val FieldPresetRmgGround = Color(0xFFEFEFEE)
+val FieldPresetRmgInk = Color(0xFF0D0D0F)
 
-val TextPrimary = Color(0xFFF8FAFC)
-val TextSecondary = Color(0xFF94A3B8)
-val TextMuted = Color(0xFF64748B)
+val FieldPresetCncGround = Color(0xFF0D0D0F)
+val FieldPresetCncInk = Color(0xFFEFEFEE)
 
-// Light variant counterparts
-val LightBackground = Color(0xFFF8FAFC)
-val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceVariant = Color(0xFFEEF2F6)
-val LightOutline = Color(0xFFCBD5E1)
-val LightTextPrimary = Color(0xFF0F172A)
-val LightTextSecondary = Color(0xFF475569)
+val FieldPresetDokanGround = Color(0xFFE4E4E2)
+val FieldPresetDokanInk = Color(0xFF0D0D0F)
+
+// Legacy aliases mapped to the achromatic + signal accent palette for sub-drawers
+val AuralisCyan = SignalAccent
+val AuralisCyanDark = SignalAccent
+val AuralisAmber = InkPrimary
+val AuralisAmberDark = InkSecondary
+val AuralisBkashPink = SignalAccent
+val AuralisGreen = SignalAccent
+val AuralisRed = InkPrimary
+
+val DarkBackground = InkPrimary
+val DarkSurface = Color(0xFF141418)
+val DarkSurfaceVariant = Color(0xFF1C1C22)
+val DarkOutline = InvertedHairlineRule
+
+val TextPrimary = AchromaticGround
+val TextSecondary = Color(0xFFA8A9B2)
+val TextMuted = InkMuted
+
+val LightBackground = AchromaticGround
+val LightSurface = DimmerStageGround
+val LightSurfaceVariant = Color(0xFFDADAD7)
+val LightOutline = HairlineRule
+val LightTextPrimary = InkPrimary
+val LightTextSecondary = InkSecondary
