@@ -1,0 +1,6 @@
+{
+  "name": "AuralisOS",
+  "description": "Dual-market agentic AI operations, computer-vision metrology, and tokenized commerce platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

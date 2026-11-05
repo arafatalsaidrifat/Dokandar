@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Outer Metrology HUD Brackets (66dp safe zone centered around 54,54) -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M33,42 V33 H42 M75,42 V33 H66 M33,66 V75 H42 M75,66 V75 H66" />
+
+    <!-- Center Precision Targeting Reticle -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2"
+        android:pathData="M54,30 V36 M54,72 V78 M30,54 H36 M72,54 H78" />
+
+    <!-- Neural Core Diamond & Nodes -->
+    <path
+        android:fillColor="#00B4D8"
+        android:pathData="M54,42 L66,54 L54,66 L42,54 Z" />
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,49 A5,5 0 1 0 54,59 A5,5 0 1 0 54,49 Z" />
+
+    <!-- Scanning Laser Line Indicator -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF9100"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M38,47 L70,47" />
+</vector>

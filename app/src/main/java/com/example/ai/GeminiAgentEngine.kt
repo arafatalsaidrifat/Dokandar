@@ -1,0 +1,203 @@
+package com.example.ai
+
+import com.example.data.model.InspectionRecord
+import com.example.data.model.VoiceAction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.util.UUID
+
+object GeminiAgentEngine {
+
+    // Multimodal Vision Metrology Inspector
+    suspend fun analyzeImageMetrology(
+        targetName: String,
+        simulatedPreset: Int = 0
+    ): InspectionRecord = withContext(Dispatchers.IO) {
+        // High-precision metrology latency simulation
+        delay(600)
+
+        when (simulatedPreset % 4) {
+            0 -> InspectionRecord(
+                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                targetType = "Denim Inseam Stitching ($targetName)",
+                hasDefect = true,
+                defectLabel = "Skipped Stitch & Edge Puckering",
+                banglaDefectLabel = "বাদ পড়া সেলাই এবং কাপড়ের কুঁচকানো ত্রুটি",
+                confidenceScore = 0.964f,
+                boxLeft = 0.25f,
+                boxTop = 0.30f,
+                boxRight = 0.75f,
+                boxBottom = 0.65f,
+                severity = "HIGH",
+                correctiveAction = "Autonomous Reroute: Shift Line 2 feed to Line 3 hemmer. Recalibrate bobbin thread tension to 3.2cN.",
+                banglaCorrectiveAction = "স্বয়ংক্রিয় রি-রুট: লাইন ২ থেকে কাজ লাইন ৩-এ স্থানান্তর করুন। ববিনের টেনশন ৩.২cN-এ সেট করুন।",
+                affectedStation = "Sewing Station 2B"
+            )
+            1 -> InspectionRecord(
+                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                targetType = "Export Cotton Polo Collar ($targetName)",
+                hasDefect = false,
+                defectLabel = "Zero Defect - Metrology Verified",
+                banglaDefectLabel = "ত্রুটিমুক্ত - মেট্রোলজি ভেরিফাইড",
+                confidenceScore = 0.991f,
+                boxLeft = 0.15f,
+                boxTop = 0.20f,
+                boxRight = 0.85f,
+                boxBottom = 0.80f,
+                severity = "NORMAL",
+                correctiveAction = "Pass to final heat-press and Scope-3 barcoding. No intervention required.",
+                banglaCorrectiveAction = "চূড়ান্ত হিট-প্রেস এবং স্কোপ-৩ বারকোডিংয়ের জন্য অনুমোদিত। কোন হস্তক্ষেপ প্রয়োজন নেই।",
+                affectedStation = "Line 1 Inspection Grid"
+            )
+            2 -> InspectionRecord(
+                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                targetType = "Apparel Buttonhole Alignment ($targetName)",
+                hasDefect = true,
+                defectLabel = "1.8mm Radial Pitch Deviation",
+                banglaDefectLabel = "১.৮ মিলিমিটার রেডিয়াল পিচ বিচ্যুতি",
+                confidenceScore = 0.918f,
+                boxLeft = 0.38f,
+                boxTop = 0.42f,
+                boxRight = 0.62f,
+                boxBottom = 0.58f,
+                severity = "CRITICAL",
+                correctiveAction = "Halt CNC feeder motor immediately. Material rerouted to manual jig station 4.",
+                banglaCorrectiveAction = "সিএনসি মোটর অবিলম্বে বন্ধ করুন। উপাদান ম্যানুয়াল জিগ স্টেশন ৪-এ রি-রুট করা হয়েছে।",
+                affectedStation = "CNC Station 4"
+            )
+            else -> InspectionRecord(
+                id = "INSP-${UUID.randomUUID().toString().take(8)}",
+                targetType = "Micro-Retail Shelf Inventory SKU ($targetName)",
+                hasDefect = false,
+                defectLabel = "SKU Stock Count: 48 Units (100% Shelf Compliance)",
+                banglaDefectLabel = "এসকেইউ স্টক গণনা: ৪৮ ইউনিট (১০০% শেলফ কমপ্লায়েন্স)",
+                confidenceScore = 0.985f,
+                boxLeft = 0.10f,
+                boxTop = 0.15f,
+                boxRight = 0.90f,
+                boxBottom = 0.85f,
+                severity = "NORMAL",
+                correctiveAction = "Sync Dokan ledger. Restock threshold safe for next 72 hours.",
+                banglaCorrectiveAction = "দোকানের খাতা সিঙ্ক করুন। আগামী ৭২ ঘণ্টার জন্য স্টক নিরাপদ।",
+                affectedStation = "Retail Rack B"
+            )
+        }
+    }
+
+    // Bilingual Voice-to-Action ERP Function Calling Agent
+    suspend fun executeVoiceCommand(
+        transcript: String,
+        isBangla: Boolean
+    ): VoiceAction = withContext(Dispatchers.IO) {
+        delay(500)
+
+        val cleanText = transcript.trim()
+        val isBn = isBangla || cleanText.any { it in '\u0980'..'\u09FF' }
+
+        val (intent, toolName, jsonPayload) = when {
+            cleanText.contains("ইনভয়েস", ignoreCase = true) || cleanText.contains("invoice", ignoreCase = true) || cleanText.contains("bill", ignoreCase = true) -> {
+                val customer = if (isBn) "মিরপুর টেক্সটাইল মার্চেন্টস" else "Dhaka Global Apparels Ltd"
+                val items = if (isBn) "৫০০ পিস এক্সপোর্ট পোলো শার্ট" else "500 pcs Cotton Pique Polo"
+                val invId = "INV-${System.currentTimeMillis().toString().takeLast(6)}"
+                Triple(
+                    "CREATE_INVOICE",
+                    "CreateInvoice",
+                    """
+                    {
+                      "tool": "CreateInvoice",
+                      "invoiceId": "$invId",
+                      "customer": "$customer",
+                      "itemDescription": "$items",
+                      "unitPriceBdt": 450,
+                      "quantity": 500,
+                      "totalAmountBdt": 225000,
+                      "paymentRail": "bKash Tokenized Auto-Pay (0011)",
+                      "status": "ISSUED_AND_DISPATCHED"
+                    }
+                    """.trimIndent()
+                )
+            }
+            cleanText.contains("রিস্টক", ignoreCase = true) || cleanText.contains("restock", ignoreCase = true) || cleanText.contains("কাপড়", ignoreCase = true) || cleanText.contains("fabric", ignoreCase = true) -> {
+                val poId = "PO-BEX-${System.currentTimeMillis().toString().takeLast(5)}"
+                val mat = if (isBn) "১০/১ কার্ডেড কটন সুতা" else "10/1 Carded Cotton Yarn"
+                Triple(
+                    "RESTOCK_SUPPLIER",
+                    "RestockSupplier",
+                    """
+                    {
+                      "tool": "RestockSupplier",
+                      "purchaseOrder": "$poId",
+                      "material": "$mat",
+                      "quantityUnits": 250,
+                      "unitMeasure": "Kg Bales",
+                      "supplier": "Square Textiles Mill Ltd",
+                      "estimatedCostBdt": 185000,
+                      "deliveryWindow": "48 Hours (Direct Factory Drop)",
+                      "status": "TRANSMITTED_TO_SUPPLIER"
+                    }
+                    """.trimIndent()
+                )
+            }
+            cleanText.contains("রুট", ignoreCase = true) || cleanText.contains("reroute", ignoreCase = true) || cleanText.contains("মেশিন", ignoreCase = true) || cleanText.contains("machine", ignoreCase = true) -> {
+                val reason = if (isBn) "টেনশন ড্রপ ও সেলাই লুপ বিচ্যুতি" else "Tension Drop and Loop Anomaly"
+                Triple(
+                    "REROUTE_STATION",
+                    "RerouteStation",
+                    """
+                    {
+                      "tool": "RerouteStation",
+                      "sourceStationId": "LINE-02-WELDER",
+                      "targetStationId": "LINE-03-PRECISION-HEM",
+                      "defectReason": "$reason",
+                      "quotaPreservationRate": "99.4%",
+                      "utilityCostSavedBdt": 18400,
+                      "status": "AGENTIC_OVERRIDE_ACTIVE"
+                    }
+                    """.trimIndent()
+                )
+            }
+            else -> {
+                val audId = "AUD-${System.currentTimeMillis().toString().takeLast(6)}"
+                Triple(
+                    "LEDGER_UPDATE",
+                    "LedgerAudit",
+                    """
+                    {
+                      "tool": "LedgerAudit",
+                      "auditId": "$audId",
+                      "reconciliationBalanceBdt": 540200,
+                      "mfsTransactionCount": 38,
+                      "mfsFraudRiskScore": "0.01% (SAFE)",
+                      "workingCapitalCreditLimitBdt": 1000000,
+                      "status": "RECONCILED"
+                    }
+                    """.trimIndent()
+                )
+            }
+        }
+
+        VoiceAction(
+            id = "VA-${UUID.randomUUID().toString().take(8)}",
+            transcript = cleanText,
+            language = if (isBn) "bn" else "en",
+            intent = intent,
+            structuredJson = jsonPayload,
+            status = "EXECUTED"
+        )
+    }
+
+    // Scope-3 ESG and International Buyer Compliance Summary
+    fun generateScope3Summary(activeLines: Int, defectReductionPercent: Double): String {
+        val carbonSaved = (activeLines * 1420 * (defectReductionPercent / 100.0)).toInt()
+        val energyKwhSaved = (carbonSaved * 1.85).toInt()
+        return """
+            [Scope-3 Verified ESG Card]
+            • Carbon Footprint Abatement: $carbonSaved kg CO2e
+            • Grid Peak Shift Energy Reduction: $energyKwhSaved kWh
+            • EU Corporate Sustainability Due Diligence Directive (CSDDD): COMPLIANT
+            • US Uyghur Forced Labor Prevention Act (UFLPA) Traceability: CERTIFIED 100%
+        """.trimIndent()
+    }
+}

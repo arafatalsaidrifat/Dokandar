@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AuralisOS — Dual-Market Agentic AI & Tokenized Commerce Web Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#0B0F19',
+            cardbg: '#131B2E',
+            cardborder: '#1E293B',
+            auralisCyan: '#00E5FF',
+            auralisAmber: '#FF9100',
+            bkashPink: '#E2136E',
+            auralisGreen: '#00E676',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+      background-color: #0B0F19;
+      color: #F8FAFC;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .scan-line {
+      animation: scan 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes scan {
+      0% { top: 5%; }
+      100% { top: 90%; }
+    }
+    .hud-pulse {
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-obsidian min-h-screen text-slate-100 flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-cardborder bg-cardbg/80 backdrop-blur sticky top-0 z-50 px-4 lg:px-8 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-lg bg-cyan-950 border border-auralisCyan/40 flex items-center justify-center text-auralisCyan font-bold text-lg">
+        ▲
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <span class="font-extrabold text-lg tracking-wider text-white">AURALIS<span class="text-auralisCyan">OS</span></span>
+          <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-auralisCyan border border-cyan-500/20 mono font-semibold">WEB-PORTAL v2.6</span>
+        </div>
+        <p class="text-xs text-slate-400 hidden sm:block" id="app-tagline">Dual-Market Agentic Operations & Tokenized Commerce</p>
+      </div>
+    </div>
+
+    <!-- Right Controls: Role & Language Toggle -->
+    <div class="flex items-center space-x-3">
+      <!-- Role Preset -->
+      <div class="flex bg-slate-900 border border-cardborder rounded-lg p-0.5 text-xs">
+        <button id="role-factory" onclick="switchRole('factory')" class="px-2.5 py-1 rounded bg-auralisCyan text-slate-950 font-bold transition">Factory RMG</button>
+        <button id="role-dokan" onclick="switchRole('dokan')" class="px-2.5 py-1 rounded text-slate-400 hover:text-white transition">SME Dokan</button>
+      </div>
+
+      <!-- Language Toggle -->
+      <button onclick="toggleLang()" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/40 text-auralisCyan text-xs font-semibold hover:bg-cyan-900/40 transition">
+        <span id="lang-indicator">বাংলা</span>
+        <span class="text-[10px] opacity-70">🌐</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Vision Metrology & Live Camera HUD (7 cols) -->
+    <section class="lg:col-span-7 flex flex-col space-y-6">
+      
+      <!-- Metrology Viewport Card -->
+      <div class="bg-cardbg border border-cardborder rounded-2xl p-4 lg:p-5 shadow-2xl relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center space-x-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <h2 class="font-bold text-sm tracking-wide uppercase text-slate-200" id="metrology-title">Module A: Computer Vision Metrology</h2>
+          </div>
+          <span class="mono text-xs px-2 py-0.5 rounded bg-slate-800 text-auralisCyan border border-slate-700">GEMINI-2.5 MULTIMODAL</span>
+        </div>
+
+        <!-- Simulated Visual Inspection Canvas / Frame -->
+        <div class="relative w-full h-72 sm:h-80 bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
+          
+          <!-- Background Textile Grid Pattern -->
+          <div class="absolute inset-0 opacity-25" style="background-image: radial-gradient(#00E5FF 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+          <!-- Dynamic Defect Inspection Graphic -->
+          <div id="inspection-graphic" class="relative z-10 w-4/5 h-4/5 border border-dashed border-slate-700 rounded-lg flex flex-col items-center justify-center p-4">
+            <div class="w-36 h-20 rounded border-2 border-dashed border-auralisAmber bg-amber-500/10 flex items-center justify-center relative hud-pulse">
+              <span class="absolute -top-3 left-2 text-[10px] font-mono bg-auralisAmber text-slate-950 px-1.5 py-0.5 rounded font-bold">DEFECT: 96.4% CONF</span>
+              <div class="w-full h-0.5 bg-red-500/80 my-1"></div>
+              <span class="text-xs text-amber-300 font-semibold text-center px-1">Skipped Stitching & Puckering</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-4 mono text-center">Denim Seam Inspection • Station 2B</p>
+          </div>
+
+          <!-- Moving Laser Scan Line -->
+          <div class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-auralisCyan to-transparent scan-line shadow-[0_0_12px_#00E5FF]"></div>
+
+          <!-- Metrology HUD Overlay Coordinates -->
+          <div class="absolute bottom-2 left-3 font-mono text-[10px] text-slate-400 bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
+            FRAME: 1080p • LATENCY: 28ms • METROLOGY: 0.05mm TOLERANCE
+          </div>
+
+          <div class="absolute top-2 right-3">
+            <button onclick="triggerNewScan()" class="text-xs px-3 py-1 bg-auralisCyan text-slate-950 font-bold rounded shadow hover:bg-cyan-300 transition">
+              ⚡ Trigger New Inspection
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-time Diagnostic & Autonomous Rerouting Box -->
+        <div id="diagnostic-box" class="mt-4 p-4 rounded-xl bg-slate-900/90 border border-amber-500/30 flex items-start space-x-3">
+          <div class="text-2xl">⚠️</div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-amber-400 text-sm" id="diag-headline">Autonomous Agentic Routing Activated</h3>
+              <span class="text-[10px] mono bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded border border-amber-500/30">SEVERITY: HIGH</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1" id="diag-body">
+              Skipped stitch anomaly detected on Sewing Line 2. System autonomously reroutes raw material feed to Line 3 backup hemming station and triggers automated tension recalibration.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scope-3 ESG & Buyer Risk Oracle Card -->
+      <div class="bg-cardbg border border-cardborder rounded-2xl p-4 lg:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-sm tracking-wide uppercase text-slate-200">Module C: Scope-3 ESG & Compliance Oracle</h3>
+          <span class="text-xs text-emerald-400 font-mono font-semibold">EU CSDDD & US UFLPA VERIFIED</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+            <div class="text-lg font-bold text-auralisCyan mono">8,920 kg</div>
+            <div class="text-[11px] text-slate-400">Carbon Abated</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+            <div class="text-lg font-bold text-emerald-400 mono">16,500 kWh</div>
+            <div class="text-[11px] text-slate-400">Grid Peak Shift</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+            <div class="text-lg font-bold text-amber-400 mono">34.2%</div>
+            <div class="text-[11px] text-slate-400">Defect Reduction</div>
+          </div>
+          <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+            <div class="text-lg font-bold text-purple-400 mono">100%</div>
+            <div class="text-[11px] text-slate-400">SLA Quota Intact</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right Column: Voice ERP & Dual-Market Payments (5 cols) -->
+    <section class="lg:col-span-5 flex flex-col space-y-6">
+
+      <!-- Bilingual Voice-to-Action ERP Agent -->
+      <div class="bg-cardbg border border-cardborder rounded-2xl p-4 lg:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold text-sm tracking-wide uppercase text-slate-200">Module B: Bilingual Voice ERP Agent</h2>
+          <span class="text-xs text-emerald-400 font-mono">FUNCTION CALLING ACTIVE</span>
+        </div>
+
+        <!-- Voice Prompt Simulator Input -->
+        <div class="space-y-3">
+          <label class="text-xs text-slate-400 font-medium" id="voice-input-label">Spoken Command (Bangla or English):</label>
+          <div class="flex items-center space-x-2">
+            <input type="text" id="voice-input" value="লাইন ৩ এর জন্য ৫০ গজ সুতি কাপড় রিস্টক অর্ডার করো" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-auralisCyan mono">
+            <button onclick="dispatchVoiceCommand()" class="px-3.5 py-2 bg-gradient-to-r from-auralisCyan to-cyan-500 text-slate-950 font-bold rounded-xl text-xs flex items-center space-x-1 shadow hover:brightness-110 transition">
+              <span>🎙️</span>
+              <span id="btn-dispatch">Execute</span>
+            </button>
+          </div>
+
+          <!-- Quick Spoken Preset Chips -->
+          <div class="flex flex-wrap gap-1.5 pt-1">
+            <button onclick="setVoicePrompt('মিরপুর দোকানের জন্য ১০০ পিস টি-শার্ট ইনভয়েস তৈরি করো')" class="text-[11px] px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300">
+              🇧🇩 ইনভয়েস তৈরি
+            </button>
+            <button onclick="setVoicePrompt('Create restock purchase order for 250 rolls carded cotton')" class="text-[11px] px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300">
+              🇬🇧 Restock PO
+            </button>
+            <button onclick="setVoicePrompt('লাইন ২ ব্রেকডাউন - রুট লাইন ৩ এ ট্রান্সফার করো')" class="text-[11px] px-2 py-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-lg text-slate-300">
+              🇧🇩 স্টেশন রি-রুট
+            </button>
+          </div>
+        </div>
+
+        <!-- Structured Function Call Output Console -->
+        <div class="mt-4 bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-[11px]">
+          <div class="text-slate-400 text-[10px] mb-1 flex items-center justify-between border-b border-slate-800 pb-1">
+            <span>TOOL OUTPUT • JSON</span>
+            <span class="text-emerald-400" id="tool-status">STATUS: EXECUTED</span>
+          </div>
+          <pre id="json-console" class="text-cyan-300 overflow-x-auto whitespace-pre-wrap">{
+  "tool": "RestockSupplier",
+  "purchaseOrder": "PO-BEX-9921",
+  "material": "10/1 Carded Cotton Yarn",
+  "quantity": 250,
+  "unitMeasure": "Kg Bales",
+  "supplier": "Square Textiles Ltd",
+  "status": "TRANSMITTED_TO_SUPPLIER"
+}</pre>
+        </div>
+      </div>
+
+      <!-- Dual-Market Payment Rails & bKash Tokenized Checkout -->
+      <div class="bg-cardbg border border-cardborder rounded-2xl p-4 lg:p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold text-sm tracking-wide uppercase text-slate-200">Dual-Market Tokenized Payments</h2>
+          <div class="flex space-x-1">
+            <button id="tab-bkash" onclick="switchPaymentRail('bkash')" class="text-xs px-2.5 py-1 rounded bg-bkashPink text-white font-bold transition">bKash (BDT)</button>
+            <button id="tab-stripe" onclick="switchPaymentRail('stripe')" class="text-xs px-2.5 py-1 rounded text-slate-400 hover:text-white transition">Stripe (USD)</button>
+          </div>
+        </div>
+
+        <!-- bKash Tokenized Checkout View -->
+        <div id="bkash-view" class="space-y-3">
+          <div class="p-3 bg-pink-950/20 border border-pink-500/30 rounded-xl">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-pink-400">bKash Tokenized Checkout API (v1.2.0-beta)</span>
+              <span class="text-[10px] mono bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded">MODE: 0011</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              One-click wallet binding. Generates a persistent <code class="text-pink-300">agreementId</code> for recurring 30-day auto-pay without repeating OTP entry.
+            </p>
+          </div>
+
+          <!-- Active Agreement Card -->
+          <div id="agreement-card" class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-xs font-semibold text-slate-200" id="agr-id">AGR-BKASH-8801723-9941</div>
+              <div class="text-[11px] text-slate-400">Wallet: 01723-994120 • Cycle: 30 Days</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-bold text-emerald-400">BOUND & ACTIVE</span>
+              <div class="text-[11px] text-slate-400">৳25,000 / mo</div>
+            </div>
+          </div>
+
+          <button onclick="openBkashModal()" class="w-full py-2.5 bg-bkashPink hover:bg-pink-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center space-x-2 shadow-lg shadow-pink-900/30">
+            <span>Bind New bKash Wallet (Auto-Pay Agreement)</span>
+          </button>
+        </div>
+
+        <!-- Stripe Global View (Hidden by default) -->
+        <div id="stripe-view" class="space-y-3 hidden">
+          <div class="p-3 bg-indigo-950/20 border border-indigo-500/30 rounded-xl">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-indigo-400">Stripe Global SaaS Multi-Currency Rail</span>
+              <span class="text-[10px] mono bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded">USD / EUR</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">
+              Global Enterprise billing with tiered monthly SaaS plus 10% shared-savings performance billing hook.
+            </p>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex items-center justify-between">
+            <div>
+              <div class="text-xs font-semibold text-slate-200">Auralis Enterprise Global Grid</div>
+              <div class="text-[11px] text-slate-400">EU & US Retail Buyers • Scope-3 Audited</div>
+            </div>
+            <div class="text-right">
+              <span class="text-xs font-bold text-indigo-400">$1,899 / mo</span>
+              <div class="text-[11px] text-slate-400">+10% Shared Savings</div>
+            </div>
+          </div>
+          <button onclick="alert('Stripe multi-currency checkout intent initialized!')" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition">
+            Launch Stripe Global Checkout
+          </button>
+        </div>
+
+      </div>
+
+      <!-- iDEA & SBL Grant Governance Telemetry Card -->
+      <div class="bg-cardbg border border-cardborder rounded-2xl p-4 lg:p-5">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-bold text-xs uppercase tracking-wide text-slate-300">iDEA Pre-Seed Grant & SBL Governance Audit</h3>
+          <span class="text-[10px] mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">BDT 10 LAKH GRANT OK</span>
+        </div>
+        <div class="space-y-2 text-xs">
+          <div>
+            <div class="flex justify-between text-[11px] mb-1">
+              <span class="text-slate-400">iDEA Milestone KPI (Tranche 1):</span>
+              <span class="text-auralisCyan font-mono">100% Achieved</span>
+            </div>
+            <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
+              <div class="bg-auralisCyan h-full rounded-full" style="width: 100%"></div>
+            </div>
+          </div>
+          <div class="flex justify-between items-center text-[11px] text-slate-400 pt-1">
+            <span>SBL LTV:CAC Ratio: <strong class="text-white">4.6x</strong></span>
+            <span>Net Revenue Retention: <strong class="text-white">128.5%</strong></span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Modal for bKash Wallet Agreement (Mode 0011) Binding Simulation -->
+  <div id="bkash-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-pink-500/40 rounded-2xl max-w-sm w-full p-5 shadow-2xl relative">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-2">
+          <div class="w-7 h-7 bg-bkashPink rounded flex items-center justify-center text-white font-bold text-xs">bK</div>
+          <h3 class="font-bold text-sm text-white">bKash Tokenized Agreement (0011)</h3>
+        </div>
+        <button onclick="closeBkashModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">bKash Wallet Number (11 Digits):</label>
+          <input type="text" id="modal-wallet" value="01712-345678" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-slate-200 mono">
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">SMS 6-Digit OTP:</label>
+          <input type="text" id="modal-otp" value="582194" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-slate-200 mono">
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">bKash Secret PIN:</label>
+          <input type="password" id="modal-pin" value="•••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-slate-200 mono">
+        </div>
+        <p class="text-[10px] text-slate-400">
+          * Server verifies paymentID, executes agreement, and binds agreementId without ever saving PIN or OTPs.
+        </p>
+        <button onclick="submitBkashAgreement()" class="w-full py-2 bg-bkashPink hover:bg-pink-600 text-white font-bold rounded-lg transition mt-2">
+          Confirm & Bind Auto-Pay Agreement
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    let currentLang = 'en';
+    let currentRole = 'factory';
+    let scanIndex = 0;
+
+    const scans = [
+      {
+        defect: "Skipped Stitching & Puckering",
+        defectBn: "বাদ পড়া সেলাই এবং কাপড়ের কুঁচকানো ত্রুটি",
+        conf: "96.4%",
+        station: "Denim Station 2B",
+        severity: "HIGH",
+        action: "Autonomous Reroute: Shift Line 2 feed to Line 3 backup hemmer. Recalibrate bobbin tension to 3.2cN.",
+        actionBn: "স্বয়ংক্রিয় রি-রুট: লাইন ২ থেকে কাজ লাইন ৩-এ স্থানান্তর করুন। ববিনের টেনশন ৩.২cN-এ সেট করুন।"
+      },
+      {
+        defect: "Zero Defect - Verified",
+        defectBn: "ত্রুটিমুক্ত - ভেরিফাইড",
+        conf: "99.2%",
+        station: "Polo Hemming Grid",
+        severity: "NORMAL",
+        action: "Approved for Scope-3 international packaging. Automated barcode dispatched.",
+        actionBn: "স্কোপ-৩ আন্তর্জাতিক প্যাকেজিংয়ের জন্য অনুমোদিত। স্বয়ংক্রিয় বারকোড ইস্যু করা হয়েছে।"
+      },
+      {
+        defect: "1.8mm Radial Alignment Pitch Deviation",
+        defectBn: "১.৮ মিমি রেডিয়াল পিচ বিচ্যুতি",
+        conf: "92.8%",
+        station: "Buttonhole CNC Station 4",
+        severity: "CRITICAL",
+        action: "Halt CNC motor immediately. Materials rerouted to station 1 backup jig.",
+        actionBn: "সিএনসি মোটর অবিলম্বে বন্ধ করুন। উপাদান স্টেশন ১ ব্যাকআপ জিগে স্থানান্তর করা হয়েছে।"
+      }
+    ];
+
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'bn' : 'en';
+      document.getElementById('lang-indicator').innerText = currentLang === 'en' ? 'বাংলা' : 'English';
+      updateLanguageUI();
+    }
+
+    function updateLanguageUI() {
+      const isBn = currentLang === 'bn';
+      document.getElementById('app-tagline').innerText = isBn 
+        ? 'ডুয়েল-মার্কেট এজেন্টিক অপারেশনস এবং টোকেনাইজড কমার্স'
+        : 'Dual-Market Agentic Operations & Tokenized Commerce';
+      document.getElementById('metrology-title').innerText = isBn
+        ? 'মডিউল এ: কম্পিউটার ভিশন কোয়ালিটি ইন্সপেকশন'
+        : 'Module A: Computer Vision Metrology';
+      document.getElementById('voice-input-label').innerText = isBn
+        ? 'ভয়েস কমান্ড (বাংলা অথবা ইংরেজি):'
+        : 'Spoken Command (Bangla or English):';
+      document.getElementById('btn-dispatch').innerText = isBn ? 'এক্সিকিউট' : 'Execute';
+      
+      renderScanData();
+    }
+
+    function switchRole(role) {
+      currentRole = role;
+      const btnFactory = document.getElementById('role-factory');
+      const btnDokan = document.getElementById('role-dokan');
+      if (role === 'factory') {
+        btnFactory.className = "px-2.5 py-1 rounded bg-auralisCyan text-slate-950 font-bold transition";
+        btnDokan.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+        document.getElementById('voice-input').value = "লাইন ৩ এর জন্য ৫০ গজ সুতি কাপড় রিস্টক অর্ডার করো";
+      } else {
+        btnDokan.className = "px-2.5 py-1 rounded bg-auralisCyan text-slate-950 font-bold transition";
+        btnFactory.className = "px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+        document.getElementById('voice-input').value = "মিরপুর দোকানের জন্য ১০০ পিস টি-শার্ট ইনভয়েস তৈরি করো";
+      }
+    }
+
+    function triggerNewScan() {
+      scanIndex = (scanIndex + 1) % scans.length;
+      renderScanData();
+    }
+
+    function renderScanData() {
+      const cur = scans[scanIndex];
+      const isBn = currentLang === 'bn';
+      const diagHeadline = document.getElementById('diag-headline');
+      const diagBody = document.getElementById('diag-body');
+
+      diagHeadline.innerText = isBn 
+        ? (cur.severity === 'NORMAL' ? 'কোয়ালিটি অনুমোদিত' : 'স্বয়ংক্রিয় রি-রুট সক্রিয়')
+        : (cur.severity === 'NORMAL' ? 'Quality Verified - No Defect' : 'Autonomous Agentic Routing Activated');
+      
+      diagBody.innerText = isBn ? cur.actionBn : cur.action;
+    }
+
+    function setVoicePrompt(text) {
+      document.getElementById('voice-input').value = text;
+      dispatchVoiceCommand();
+    }
+
+    function dispatchVoiceCommand() {
+      const text = document.getElementById('voice-input').value;
+      const isBn = currentLang === 'bn' || text.match(/[\u0980-\u09FF]/);
+      let toolName = "CreateInvoice";
+      let payload = {};
+
+      if (text.includes("ইনভয়েস") || text.includes("invoice")) {
+        toolName = "CreateInvoice";
+        payload = {
+          tool: "CreateInvoice",
+          invoiceId: "INV-" + Math.floor(Math.random() * 899999 + 100000),
+          customer: isBn ? "মিরপুর টেক্সটাইল মার্চেন্টস" : "Dhaka Global Apparels Ltd",
+          item: isBn ? "১০০ পিস কটন টি-শার্ট" : "100 pcs Cotton T-Shirts",
+          totalAmountBdt: 45000,
+          paymentRail: "bKash Tokenized Auto-Pay (0011)",
+          status: "ISSUED"
+        };
+      } else if (text.includes("রিস্টক") || text.includes("restock")) {
+        toolName = "RestockSupplier";
+        payload = {
+          tool: "RestockSupplier",
+          purchaseOrder: "PO-BEX-" + Math.floor(Math.random() * 8999 + 1000),
+          material: isBn ? "৫০ গজ ডেনিম সুতা" : "50 Yards Denim Fabric",
+          supplier: "Beximco Textiles Ltd",
+          status: "TRANSMITTED_TO_SUPPLIER"
+        };
+      } else {
+        toolName = "RerouteStation";
+        payload = {
+          tool: "RerouteStation",
+          sourceStation: "Line 2 Welder",
+          targetStation: "Line 3 Precision Hemming",
+          reason: "Tension Anomaly",
+          status: "AGENTIC_OVERRIDE_ACTIVE"
+        };
+      }
+
+      document.getElementById('json-console').innerText = JSON.stringify(payload, null, 2);
+    }
+
+    function switchPaymentRail(rail) {
+      const bkashView = document.getElementById('bkash-view');
+      const stripeView = document.getElementById('stripe-view');
+      const tabBkash = document.getElementById('tab-bkash');
+      const tabStripe = document.getElementById('tab-stripe');
+
+      if (rail === 'bkash') {
+        bkashView.classList.remove('hidden');
+        stripeView.classList.add('hidden');
+        tabBkash.className = "text-xs px-2.5 py-1 rounded bg-bkashPink text-white font-bold transition";
+        tabStripe.className = "text-xs px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      } else {
+        bkashView.classList.add('hidden');
+        stripeView.classList.remove('hidden');
+        tabStripe.className = "text-xs px-2.5 py-1 rounded bg-indigo-600 text-white font-bold transition";
+        tabBkash.className = "text-xs px-2.5 py-1 rounded text-slate-400 hover:text-white transition";
+      }
+    }
+
+    function openBkashModal() {
+      document.getElementById('bkash-modal').classList.remove('hidden');
+    }
+
+    function closeBkashModal() {
+      document.getElementById('bkash-modal').classList.add('hidden');
+    }
+
+    function submitBkashAgreement() {
+      const wallet = document.getElementById('modal-wallet').value;
+      const newAgrId = "AGR-BKASH-" + Math.floor(Math.random() * 899999 + 100000);
+      document.getElementById('agr-id').innerText = newAgrId;
+      closeBkashModal();
+      alert("Agreement successfully executed! Persistent agreementId: " + newAgrId + " bound for recurring auto-pay.");
+    }
+  </script>
+
+</body>
+</html>
