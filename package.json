@@ -1,0 +1,27 @@
+{
+  "name": "bazarly",
+  "version": "4.2.0",
+  "description": "Poster-scale technical-product platform for sub-millimeter optical metrology, bilingual voice ERP, and dual-market tokenized commerce.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test test/*.test.js",
+    "sync:web": "node scripts/sync-web.js"
+  },
+  "keywords": [
+    "bazarly",
+    "dokandar",
+    "optical-metrology",
+    "voice-erp",
+    "bkash-0011",
+    "gemini-ai",
+    "android",
+    "bangladesh"
+  ],
+  "author": "Arafat Al Said Rifat",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

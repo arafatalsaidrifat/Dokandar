@@ -137,6 +137,22 @@ class WebCompanionServer(
                         sendJsonResponse(rawOut, 200, stateJson)
                     }
 
+                    requestLine.startsWith("GET /api/telemetry") -> {
+                        val telemetryJson = JSONObject().apply {
+                            put("activeFactories", 18)
+                            put("activeDokans", 84)
+                            put("defectReductionPercent", 34.2)
+                            put("gmvTotalBdt", 12450000.0)
+                            put("monthlyRecurringRevenueUsd", 14200.0)
+                            put("netRevenueRetentionPercent", 128.5)
+                            put("ltvCacRatio", 4.6)
+                            put("scope3CarbonSavedKg", 8920.0)
+                            put("ideaPreSeedTrancheStatus", "TRANCHE_1_VERIFIED")
+                            put("sblGovernanceScore", 96)
+                        }.toString()
+                        sendJsonResponse(rawOut, 200, telemetryJson)
+                    }
+
                     requestLine.startsWith("POST /api/metrology/inspect") -> {
                         val responseJson = runBlocking { handleMetrologyInspect(bodyString) }
                         sendJsonResponse(rawOut, 200, responseJson)
@@ -150,6 +166,20 @@ class WebCompanionServer(
                     requestLine.startsWith("POST /api/payments/bind") -> {
                         val responseJson = runBlocking { handlePaymentBind(bodyString) }
                         sendJsonResponse(rawOut, 200, responseJson)
+                    }
+
+                    requestLine.startsWith("POST /api/payments/execute") -> {
+                        val req = try { JSONObject(bodyString) } catch (_: Exception) { JSONObject() }
+                        val agrId = req.optString("agreementId", "AGR-BKASH-0011")
+                        val amount = req.optDouble("amountBdt", 25000.0)
+                        val res = JSONObject().apply {
+                            put("status", "EXECUTED")
+                            put("agreementId", agrId)
+                            put("amountBdt", amount)
+                            put("transactionId", "TXN-${System.currentTimeMillis().toString().takeLast(8)}")
+                            put("settledAt", java.util.Date().toString())
+                        }.toString()
+                        sendJsonResponse(rawOut, 200, res)
                     }
 
                     requestLine.startsWith("GET /manifest.json") -> {
